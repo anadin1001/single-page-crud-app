@@ -5,17 +5,22 @@ require("dotenv").config();
 
 const app = express();
 
-// Middleware-uri esențiale
+
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-// Import rute
 const routes = require("./routes");
+const authorRoutes = require("./routes/authors");
+const bookRoutes = require("./routes/books");
+
+app.use("/api/authors", authorRoutes);
+app.use("/api/books", bookRoutes);
 app.use("/api", routes);
 
-// Pornirea serverului
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
