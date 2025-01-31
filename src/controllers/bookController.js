@@ -139,3 +139,35 @@ exports.deleteBook = async (req, res) => {
       res.status(500).json({ message: "Error deleting book", error: error.message });
   }
 };
+
+exports.getBookById = async (req, res) => {
+  try {
+    console.log("Request Params:", req.params);
+    const { authorId, bookId } = req.params;
+
+    if (!authorId || !bookId) {
+      return res.status(400).json({ error: "Both authorId and bookId are required" });
+    }
+
+    const authorRef = db.collection("authors").doc(authorId);
+    const authorSnapshot = await authorRef.get();
+
+    if (!authorSnapshot.exists) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    const authorData = authorSnapshot.data();
+    const books = authorData.books || [];
+
+    const book = books.find(book => book.id === bookId);
+
+    if (!book) {
+      return res.status(404).json({ message: "Book not found for this author" });
+    }
+
+    res.status(200).json(book);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching book", error: error.message });
+  }
+};
+

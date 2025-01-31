@@ -109,4 +109,27 @@ const deleteAuthor = async (req, res) => {
   }
 };
 
-module.exports = { createAuthor, getAllAuthors ,deleteAuthor};
+const getAuthorById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: "Author ID is required" });
+    }
+
+    const authorRef = db.collection("authors").doc(id);
+    const authorSnapshot = await authorRef.get();
+
+    if (!authorSnapshot.exists) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    res.status(200).json({ id: authorSnapshot.id, ...authorSnapshot.data() });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching author", error: error.message });
+  }
+};
+
+
+
+module.exports = { createAuthor, getAllAuthors ,deleteAuthor, getAuthorById};
