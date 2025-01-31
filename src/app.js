@@ -2,9 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 require("dotenv").config();
+const fs=require("fs");
 
 const app = express();
+var admin = require("firebase-admin");
 
+var serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 app.use(express.json());
 app.use(cors());
