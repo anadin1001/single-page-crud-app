@@ -4,7 +4,6 @@ const { getFirestore } = require("firebase/firestore");
 
 const validateData = require('../utils/validateData.js');
 
-
 let books = [];
 
 exports.getAllBooks = async(req, res)=>{
@@ -25,28 +24,28 @@ exports.createBook = async(req, res) => {
     
     
     results = validateData.validateTitle(title);
-    if(results.error){
-        return res.status(400).json({error: results.error.details[0].message});
+    if(results!==true){
+        return res.status(400).send({message: results});
     }
 
     results = validateData.validateGenre(genre);
-    if(results.error){
-        return res.status(400).json({error: results.error.details[0].message});
+    if(results!==true){
+        return res.status(400).send({message: results});
     }
 
     results = validateData.validateYear(year);
-    if(results.error){
-        return res.status(400).json({error: results.error.details[0].message});
+    if(results!==true){
+        return res.status(400).send({message: results});
     }
 
     results = validateData.validateDescription(description);
-    if(results.error){
-        return res.status(400).json({error: results.error.details[0].message});
+    if(results!==true){
+        return res.status(400).send({message: results});
     }
 
     results = validateData.validatePages(pages);
-    if(results.error){
-        return res.status(400).json({error: results.error.details[0].message});
+    if(results!==true){
+        return res.status(400).send({message: results});
     }
 
     try{
