@@ -1,15 +1,9 @@
-module.exports = {
-    GENRES: ["Poezie",
-         "Dragoste",
-          "Thriller",
-           "Fictiune pentru adolescenti",
-            "Ficțiune",
-             "Fantezie",
-            "Science Fiction",
-             "Horror",
-              "Biografie", "Istorie", "Filozofie", "Psihologie", "Educatie", "Stiinte", "Tehnologie", "Arte", "Muzica", "Calatorii"],
-  };
-  
+const GENRES = [
+    "Poezie", "Dragoste", "Thriller", "Fictiune pentru adolescenti",
+    "Ficțiune", "Fantezie", "Science Fiction", "Horror", "Biografie",
+    "Istorie", "Filozofie", "Psihologie", "Educatie", "Stiinte",
+    "Tehnologie", "Arte", "Muzica", "Calatorii"
+];
 
 function validateTitle(titleName){
     if(!titleName){
@@ -111,12 +105,7 @@ function validateYear(year) {
     return true;
 }
 
-function validatePrice(price){
-    if (!price){
-        return "Price is required.";
-    }
-    return true;
-}
+
 
 module.exports = {
     validateTitle,
@@ -127,5 +116,4 @@ module.exports = {
     validateBiography,
     validatePages,
     validateYear,
-    validatePrice
 };

@@ -14,7 +14,7 @@ const routes = require("./routes");
 const authorRoutes = require("./routes/authors");
 const bookRoutes = require("./routes/books");
 
-app.use("/api/authors", authorRoutes);
+// app.use("/api/authors", authorRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api", routes);
 
