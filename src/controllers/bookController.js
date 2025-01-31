@@ -2,7 +2,6 @@ const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const db = getFirestore();;
 
 const validateData = require("../utils/validateData.js");
-const { experimentalSetDeliveryMetricsExportedToBigQueryEnabled } = require("firebase/messaging/sw");
 
 
 exports.getAllBooks = async (req, res) => {
