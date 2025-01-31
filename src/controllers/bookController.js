@@ -171,3 +171,43 @@ exports.getBookById = async (req, res) => {
   }
 };
 
+exports.updateBook = async (req, res) => {
+  try {
+    const { authorId, bookId } = req.params; 
+    const updateData = req.body; 
+
+    console.log("params", req.params);
+    console.log("body:", req.body);
+
+    if (!authorId || !bookId) {
+      return res.status(400).json({ error: "Both authorId and bookId are required" });
+    }
+
+    const authorRef = db.collection("authors").doc(authorId);
+    const authorSnapshot = await authorRef.get();
+
+    if (!authorSnapshot.exists) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    let books = authorSnapshot.data().books || [];
+
+    
+    const bookIndex = books.findIndex(book => book.id === bookId);
+    if (bookIndex === -1) { //incep de la 0 indexurile
+      return res.status(404).json({ message: "Book not found for this author" });
+    }
+
+    books[bookIndex] = { ...books[bookIndex], ...updateData };
+
+    await authorRef.update({ books });
+
+    res.status(200).json({ message: "Book updated successfully", updatedBook: books[bookIndex] });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating book", error: error.message });
+  }
+};
+
+
+
+

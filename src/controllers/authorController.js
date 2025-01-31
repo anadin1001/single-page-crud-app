@@ -131,5 +131,30 @@ const getAuthorById = async (req, res) => {
 };
 
 
+const updateAuthor = async (req, res) => {
+  try {
+    const { authorId } = req.params; 
+    const updateData = req.body;
 
-module.exports = { createAuthor, getAllAuthors ,deleteAuthor, getAuthorById};
+    if (!authorId) {
+      return res.status(400).json({ error: "Author ID is required" });
+    }
+
+    const authorRef = db.collection("authors").doc(authorId);
+    const authorSnapshot = await authorRef.get();
+
+    if (!authorSnapshot.exists) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    // Actualizăm doar câmpurile care sunt trimise
+    await authorRef.update(updateData);
+
+    res.status(200).json({ message: "Author updated successfully", updatedData: updateData });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating author", error: error.message });
+  }
+};
+
+
+module.exports = { createAuthor, getAllAuthors ,deleteAuthor, getAuthorById, updateAuthor};
