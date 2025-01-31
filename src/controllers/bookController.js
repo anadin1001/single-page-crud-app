@@ -2,6 +2,7 @@ const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const db = getFirestore();;
 
 const validateData = require("../utils/validateData.js");
+const { experimentalSetDeliveryMetricsExportedToBigQueryEnabled } = require("firebase/messaging/sw");
 
 
 exports.getAllBooks = async (req, res) => {
@@ -96,5 +97,45 @@ exports.createBook = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error creating book", error: error.message });
+  }
+};
+
+exports.deleteBook = async (req, res) => {
+  const { authorId, bookId } = req.body;
+
+  if (!authorId || !bookId) {
+      return res.status(400).json({ error: "Both authorId and bookId are required" });
+  }
+
+  try {
+
+      const authorRef = db.collection("authors").doc(authorId);
+      const authorSnapshot = await authorRef.get();
+
+      if (!authorSnapshot.exists) {
+          return res.status(404).json({ message: "Author not found" });
+      }
+
+
+      const authorData = authorSnapshot.data();
+      const books = authorData.books || [];
+
+
+      const bookIndex = books.findIndex(book => book.id === bookId);
+      if (bookIndex === -1) {
+          return res.status(404).json({ message: "Book not found in author's book list" });
+      }
+
+    
+      const updatedBooks = books.filter(book => book.id !== bookId);
+
+      
+      await authorRef.update({
+          books: updatedBooks
+      });
+
+      res.status(200).json({ message: "Book deleted successfully", bookId });
+  } catch (error) {
+      res.status(500).json({ message: "Error deleting book", error: error.message });
   }
 };

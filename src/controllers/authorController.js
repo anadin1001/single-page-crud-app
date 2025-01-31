@@ -77,4 +77,36 @@ const createAuthor = async (req, res) => {
   }
 };
 
-module.exports = { createAuthor, getAllAuthors };
+const deleteAuthor = async (req, res) => {
+  try {
+    const { authorId } = req.body;
+
+    console.log("Received request to delete author:", authorId);
+
+    // Verifică dacă id exista
+    if (!authorId) {
+      return res.status(400).json({ error: "Author ID is required" });
+    }
+
+    const authorRef = db.collection("authors").doc(authorId);
+    const authorSnapshot = await authorRef.get();
+
+    // Verifică dacă autorul există
+    if (!authorSnapshot.exists) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    await authorRef.delete();
+
+    res.status(200).json({
+      message: "Author deleted successfully",
+      authorId: authorId,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message
+    });
+  }
+};
+
+module.exports = { createAuthor, getAllAuthors ,deleteAuthor};
