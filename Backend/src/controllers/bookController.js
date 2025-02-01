@@ -2,7 +2,7 @@ const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const db = getFirestore();
 const validateData = require("../utils/validateData.js");
 
-exports.getAllBooks = async (req, res) => {
+exports.getAllBooksByAuthor = async (req, res) => {
     try {
         const authorId = req.params.authorId.trim();
         const authorRef = db.collection("authors").doc(authorId);
@@ -26,6 +26,19 @@ exports.getAllBooks = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error getting books", error: error.message });
     }
+};
+
+exports.getAllBooks = async (req, res) => {
+try{
+    const books = [];
+    const booksRef = await db.collection("books").get();
+    booksRef.forEach((doc) => {
+        books.push({ id: doc.id, ...doc.data() });
+    });
+    res.status(200).json(books);
+}catch(error){
+    res.status(500).json({ message: "Error getting books", error: error.message });
+};
 };
 
 exports.createBook = async (req, res) => {

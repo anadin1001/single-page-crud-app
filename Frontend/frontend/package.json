@@ -7,8 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@jamescoyle/vue-icon": "^0.1.2",
@@ -25,8 +24,8 @@
     "@vue/eslint-config-prettier": "^10.1.0",
     "eslint": "^9.18.0",
     "eslint-plugin-vue": "^9.32.0",
-    "prettier": "^3.4.2",
     "vite": "^6.0.11",
-    "vite-plugin-vue-devtools": "^7.7.0"
+    "vite-plugin-vue-devtools": "^7.7.0",
+    "vite-plugin-vuetify": "^2.0.4"
   }
 }

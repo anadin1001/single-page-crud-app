@@ -1,23 +1,29 @@
 <template>
-  <v-app >
-    <Navbar />
-    <v-main class="main-content">
+  <v-app>
+    <NavbarItem />
+    <v-main>
       <router-view />
     </v-main>
   </v-app>
 </template>
 
 <script setup>
-import Navbar from "@/components/NavbarItem.vue";
+import NavbarItem from "@/components/NavbarItem.vue"; 
 </script>
 
 <style>
-.v-app {
-  background-color: #6d2b2b;
-
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.main-content {
-  padding-top: 64px; 
+.v-main {
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding-top: 0px !important;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="#7f3900" dark>
+  <v-app-bar app color="#B5828C" dark>
     <v-container class="d-flex align-center">
       <svg-icon type="mdi" :path="path"></svg-icon>
       <v-toolbar-title class="d-none d-sm-flex" >Library System</v-toolbar-title>
@@ -44,6 +44,4 @@ export default {
     }
   }
 }
-
-
 </script>
