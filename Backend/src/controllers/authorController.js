@@ -34,22 +34,22 @@ const createAuthor = async (req, res) => {
 
     results = validateData.validateAuthor(name);
     if (results !== true) {
-      return res.status(400).send({ message: results });
+      return res.status(400).send({ message: "Problema" });
     }
 
     results = validateData.validateGenre(genre);
     if (results !== true) {
-      return res.status(400).send({ message: results });
+      return res.status(400).send({ message: "Problema" });
     }
 
     results = validateData.validateBiography(biography);
     if (results !== true) {
-      return res.status(400).send({ message: results });
+      return res.status(400).send({ message: "Problema" });
     }
 
     results = validateData.validateEmail(email);
     if (results !== true) {
-      return res.status(400).send({ message: results });
+      return res.status(400).send({ message: "Problema" });
     }
 
     const authorJSON = {

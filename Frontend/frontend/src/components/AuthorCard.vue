@@ -1,33 +1,34 @@
 <template>
-  <v-card class="book-card" elevation="4">
+  <v-card class="author-card" elevation="4">
     <!-- <v-img :src="book.image" height="200px" cover></v-img> -->
-    <v-card-title class="text-center">{{ book.title }}</v-card-title>
-    <v-card-subtitle class="text-center">{{ book.author }}</v-card-subtitle>
-
+    <v-card-title class="text-center">{{ author.name }}</v-card-title>
+    <v-card-subtitle class="text-center">{{ author.genre }}</v-card-subtitle>
     <v-card-actions>
       <v-btn color="primary" @click="showDialog = true">View Details</v-btn>
     </v-card-actions>
 
-    <BookDetails :book="book" v-model="showDialog" />
-
+    <AuthorDetails :author="author" v-model="showDialog" />
   </v-card>
 </template>
 
 <script setup>
-import BookDetails from './BookDetails.vue';
-import {ref} from 'vue'; // pt composition api
+import { ref } from 'vue';
 import { defineProps } from 'vue';
+import AuthorDetails from './AuthorDetails.vue';
+
 
 defineProps({
-  book: Object,
+  author: Object,
 });
 
 const showDialog = ref(false);
+
 </script>
 
 
 <style scoped>
-.book-card {
+
+.author-card {
   width: 100%;
   height: 200px;
   display: flex;
@@ -36,11 +37,11 @@ const showDialog = ref(false);
   transition: transform 0.3s ease-in-out;
 }
 
-.book-card:hover {
+.author-card:hover {
   transform: scale(1.05);
 }
 
-.text-center {
+.text-center{
   text-align: center;
 }
 </style>

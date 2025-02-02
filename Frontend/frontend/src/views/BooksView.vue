@@ -24,7 +24,7 @@
       <v-pagination
         v-model="currentPage"
         :length="totalPages"
-        @update:modelValue="paginateBooks"
+        @update:modelValue="paginatedBooks"
       ></v-pagination>
 
       <v-btn 
@@ -117,7 +117,7 @@ onMounted(fetchBooks);
   margin-top: 65px;
   width: 100vw;
   height: 100vh;
-  background-color: #FFCDB2;
+  background-color: #F6DED8;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -132,6 +132,10 @@ onMounted(fetchBooks);
   text-transform: none;
   font-size: 16px;
   color: #000;
+}
+
+.search-bar {
+  max-height: 80px;
 }
 
 h1 {
