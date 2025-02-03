@@ -5,16 +5,17 @@
                 <v-card class="pa-4">
                     <v-card-title class="headline text-center">Sign In</v-card-title>
                     <v-card-text>
-                        <v-form ref="form">
-                            <v-text-field v-model="credentials.email" label="Email" type="email" required
+                        <v-form @submit.prevent="signIn">
+                            <v-text-field v-model="email" label="Email" type="email" required
                                 :rules="[rules.required, rules.email]"></v-text-field>
-                            <v-text-field v-model="credentials.password" label="Password" type="password" required
+                            <v-text-field v-model="password" label="Password" type="password" required
                                 :rules="[rules.required]"></v-text-field>
+                            <v-card-actions class="justify-center">
+                                <v-btn color="primary" type="submit">Login</v-btn>
+                            </v-card-actions>
                         </v-form>
                     </v-card-text>
-                    <v-card-actions class="justify-center">
-                        <v-btn color="primary" @click="signIn">Sign In</v-btn>
-                    </v-card-actions>
+
                 </v-card>
             </v-col>
         </v-row>
@@ -23,22 +24,33 @@
 
 <script setup>
 import { ref } from "vue";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "vue-router";
 
-const credentials = ref({
-    email: "",
-    password: ""
-});
+const email = ref("");
+const password = ref("");
+const router = useRouter();
+const auth = getAuth();
 
 const rules = {
     required: (value) => !!value || "Required.",
     email: (value) => /.+@.+\..+/.test(value) || "E-mail must be valid."
 };
 
-const signIn = () => {
-    // Placeholder pentru acțiunea de autentificare
-    console.log("Signing in with:", credentials.value);
-    // Aici poți adăuga logica de autentificare (API call, Vuex, etc.)
-};
+const signIn = async () => {
+    try {
+        console.log("Signing in...");
+        console.log(email.value, password.value);
+        const userCredentials = await signInWithEmailAndPassword(auth, email.value, password.value);
+        const token = await userCredentials.user.getIdToken();
+
+        localStorage.setItem("token", token);
+        console.log("Signed in", userCredentials);  
+        router.push("/"); //redirectioneaza catre pagina de home
+    } catch (err) {
+        console.error("Error signing in", err);
+    }
+}
 </script>
 
 <style scoped>

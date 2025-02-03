@@ -1,10 +1,13 @@
 import { createStore } from 'vuex'
 import axios from 'axios'
+import { signOut, onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../firebase'
 
 export default createStore({
   state: {
     books: [],
     authors: [],
+    user: null,
   },
   mutations: {
     SET_BOOKS(state, books) {
@@ -40,6 +43,11 @@ export default createStore({
     REMOVE_BOOKS_BY_AUTHOR(state, authorId) {
       state.books = state.books.filter((book) => book.authorId !== authorId)
     },
+
+    // actualizeaza starea utilizatorului logat/nelogat
+    SET_USER(state, user){
+      state.user = user;
+    }
   },
   actions: {
     async fetchBooks({ commit }) {
@@ -140,9 +148,26 @@ export default createStore({
     removeBooksByAuthor({ commit }, authorId) {
       commit('REMOVE_BOOKS_BY_AUTHOR', authorId)
     },
+    // deconecteaza utilizatorul la apasarea butonului din navbar
+    async signOut({ commit }) {
+      try {
+        await signOut(auth)
+        commit('SET_USER', null)
+      } catch (error) {
+        console.error('Error signing out:', error)
+      }
+    },
+    // asculta schimbarile de stare ale utilizatorului
+    listenForChanges({ commit }) {
+      onAuthStateChanged(auth, (user) => {
+        commit('SET_USER', user)
+      })
+    }
   },
   getters: {
     allBooks: (state) => state.books,
     allAuthors: (state) => state.authors,
+    isAuthenticated: (state) => !!state.user,
+    currentUser: (state) => state.user,
   },
 })

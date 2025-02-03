@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn color="primary" class="add-btn" @click="openDialog">
+    <v-btn class="button-56" @click="openDialog">
       Add Book
     </v-btn>
 
@@ -137,5 +137,64 @@ const closeDialog = () => {
 <style scoped>
 .add-btn {
   margin-bottom: 10px;
+}
+
+.button-56 {
+  align-items: center;
+  background-color: #B5828C;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  height: 46px;
+  justify-content: center;
+  line-height: 24px;
+  max-width: 100%;
+  padding: 0 20px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-56:after {
+  background-color: #111;
+  border-radius: 8px;
+  content: "";
+  display: block;
+  height: 48px;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  top: -2px;
+  transform: translate(8px, 8px);
+  transition: transform .2s ease-out;
+  z-index: -1;
+}
+
+.button-56:hover:after {
+  transform: translate(0, 0);
+}
+
+.button-56:active {
+  background-color: #ffdeda;
+  outline: 0;
+}
+
+.button-56:hover {
+  outline: 0;
+}
+
+@media (min-width: 768px) {
+  .button-56 {
+    padding: 0 40px;
+  }
 }
 </style>

@@ -5,7 +5,7 @@
           <v-card class="pa-4">
             <v-card-title class="headline text-center">Sign Up</v-card-title>
             <v-card-text>
-              <v-form ref="form">
+              <v-form @submit.prevent="signUp">
                 <v-text-field
                   v-model="user.fullName"
                   label="Full Name"
@@ -36,11 +36,9 @@
                   required
                   :rules="[rules.required, rules.matchPassword]"
                 ></v-text-field>
+                <v-btn color="primary" type="submit">Sign Up</v-btn>
               </v-form>
             </v-card-text>
-            <v-card-actions class="justify-center">
-              <v-btn color="primary" @click="signUp">Sign Up</v-btn>
-            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
@@ -49,6 +47,9 @@
   
   <script setup>
   import { ref } from "vue";
+  import {createUserWithEmailAndPassword, updateProfile} from "firebase/auth";
+  import {useRouter} from "vue-router";
+  import {auth} from "@/firebase";
   
   const user = ref({
     fullName: "",
@@ -56,6 +57,8 @@
     password: "",
     confirmPassword: "",
   });
+
+    const router = useRouter();
   
   const rules = {
     required: (value) => !!value || "This field is required.",
@@ -66,8 +69,20 @@
       value === user.value.password || "Passwords must match.",
   };
   
-  const signUp = () => {
-    console.log("Signing up with:", user.value);
+  const signUp = async () => {
+    try{
+        console.log("User", user.value);
+        const userCredentials = await createUserWithEmailAndPassword(auth, user.value.email, user.value.password);
+        await updateProfile(userCredentials.user, {
+            displayName: user.value.fullName
+        });
+
+        console.log("Signed up", userCredentials);
+        router.push("/signin");
+
+    }catch(err){
+      console.error("Error signing up", err);
+    }
   };
   </script>
   

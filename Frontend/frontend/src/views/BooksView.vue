@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="books-container">
     <!-- Add book component -->
-    <AddBook />
+    <AddBook v-if="isAuthenticated" class="add-btn"/>
 
     <!-- Search bar -->
     <v-text-field
@@ -29,6 +29,8 @@ import BookCard from "@/components/BooksComp/BookCard.vue";
 
 const store = useStore();
 const searchQuery = ref("");
+
+const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
 // Fetch books la montare
 onMounted(() => {
@@ -59,8 +61,8 @@ const removeBook = (bookId) => {
   max-width: 100%;
   width: 100vw;
   min-height: calc(100vh - 60px);
-  padding-top: 60px;
-  padding-bottom: 60px;
+  padding-top: 100px;
+  padding-bottom: 80px;
   background-color: #F6DED8;
   background-size: cover;
   background-repeat: no-repeat;
@@ -70,6 +72,12 @@ const removeBook = (bookId) => {
 .search-bar {
   margin-bottom: 20px;
 }
+
+.add-btn{
+  margin-bottom: 20px;
+}
+
+
 </style>
 
 

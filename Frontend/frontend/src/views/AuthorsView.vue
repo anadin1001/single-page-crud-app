@@ -2,7 +2,7 @@
   <v-container fluid class="authors-container">
     <v-row>
       <v-col cols="12">
-        <v-btn color="primary" @click="showDialog = true" class="addButton">Add Author</v-btn>
+        <v-btn v-if="isAuthenticated"  @click="showDialog = true" class="button-56">Add Author</v-btn>
       </v-col>
     </v-row>
 
@@ -48,6 +48,7 @@ const store = useStore();
 const searchQuery = ref("");
 const showDialog = ref(false);
 
+const isAuthenticated = computed(() => store.getters.isAuthenticated);
 onMounted(() => {
   store.dispatch("fetchAuthors");
 });
@@ -86,8 +87,9 @@ const filteredAuthors = computed(() => {
 .authors-container {
   max-width: 100%;
   width: 100vw;
-  min-height: calc(100vh - 60px); /* Adjust the height to account for the footer */
-  padding-bottom: 60px; /* Add padding to the bottom to ensure content is not hidden behind the footer */
+  min-height: calc(100vh - 60px); 
+  padding-top: 100px;
+  padding-bottom: 80px; 
   background-color: #F6DED8;
   background-size: cover;
   background-repeat: no-repeat;
@@ -99,9 +101,6 @@ const filteredAuthors = computed(() => {
   margin-bottom: 20px;
 }
 
-.addButton {
-  margin-top: 100px;
-}
 
 @media (max-width: 600px) {
   .authors-container {
@@ -109,14 +108,70 @@ const filteredAuthors = computed(() => {
 
   }
 
-  .addButton {
-    margin-top: 10px;
-  }
-
   .search-bar {
     margin-bottom: 10px;
   }
 }
 
+
+/* CSS */
+.button-56 {
+  align-items: center;
+  background-color: #B5828C;
+  border: 2px solid #111;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  color: #111;
+  cursor: pointer;
+  display: flex;
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  height: 46px;
+  justify-content: center;
+  line-height: 24px;
+  max-width: 100%;
+  padding: 0 20px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-56:after {
+  background-color: #111;
+  border-radius: 8px;
+  content: "";
+  display: block;
+  height: 48px;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  top: -2px;
+  transform: translate(8px, 8px);
+  transition: transform .2s ease-out;
+  z-index: -1;
+}
+
+.button-56:hover:after {
+  transform: translate(0, 0);
+}
+
+.button-56:active {
+  background-color: #ffdeda;
+  outline: 0;
+}
+
+.button-56:hover {
+  outline: 0;
+}
+
+@media (min-width: 768px) {
+  .button-56 {
+    padding: 0 40px;
+  }
+}
 
 </style>
