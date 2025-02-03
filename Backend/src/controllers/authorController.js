@@ -79,11 +79,11 @@ const createAuthor = async (req, res) => {
 
 const deleteAuthor = async (req, res) => {
   try {
-    const { authorId } = req.body;
+    const authorId = req.params.id;
 
     console.log("Received request to delete author:", authorId);
 
-    // Verifică dacă id exista
+    // id exista
     if (!authorId) {
       return res.status(400).json({ error: "Author ID is required" });
     }
@@ -91,7 +91,7 @@ const deleteAuthor = async (req, res) => {
     const authorRef = db.collection("authors").doc(authorId);
     const authorSnapshot = await authorRef.get();
 
-    // Verifică dacă autorul există
+    // autor?
     if (!authorSnapshot.exists) {
       return res.status(404).json({ message: "Author not found" });
     }
@@ -103,8 +103,10 @@ const deleteAuthor = async (req, res) => {
       authorId: authorId,
     });
   } catch (error) {
+    console.error("Error deleting author:", error);
     res.status(500).json({
-      message
+      message: "Doesn t work",
+      error: error.message,
     });
   }
 };
@@ -147,7 +149,28 @@ const updateAuthor = async (req, res) => {
       return res.status(404).json({ message: "Author not found" });
     }
 
-    // Actualizăm doar câmpurile care sunt trimise
+    //verificam daca primim modificare pt un anumit camp si dupa il validam cu regulile
+    if (updateData.name && validateData.validateAuthor(updateData.name) !== true) {
+      return res.status(400).json({ message: "Invalid name" });
+    }
+
+    if (updateData.genre && validateData.validateGenre(updateData.genre) !== true) {
+      return res.status(400).json({ message: "Invalid genre" });
+    }
+
+    if (updateData.biography && validateData.validateBiography(updateData.biography) !== true) {
+      return res.status(400).json({ message: "Invalid biography" });
+    }
+
+    if (updateData.email && validateData.validateEmail(updateData.email) !== true) {
+      return res.status(400).json({ message: "Invalid email" });
+    }
+
+    if (updateData.age && isNaN(updateData.age)) {
+      return res.status(400).json({ message: "Age must be a number" });
+    }
+
+    // actualizam campurile modificate 
     await authorRef.update(updateData);
 
     res.status(200).json({ message: "Author updated successfully", updatedData: updateData });

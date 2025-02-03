@@ -4,11 +4,13 @@
     <v-main>
       <router-view />
     </v-main>
+    <FooterItem />
   </v-app>
 </template>
 
 <script setup>
 import NavbarItem from "@/components/NavbarItem.vue"; 
+import FooterItem from "@/components/FooterItem.vue";
 </script>
 
 <style>

@@ -9,7 +9,7 @@ router.get("/", getAllAuthors);
 // router.get("/:id", getAuthorById);
 router.post("/", createAuthor);
 router.put("/:authorId", updateAuthor);
-router.delete("/", deleteAuthor);
+router.delete("/:id", deleteAuthor);
 router.get("/:authorId", getAuthorById);
 
 module.exports = router;

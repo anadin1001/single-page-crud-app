@@ -91,7 +91,6 @@ const submitAuthor = async () => {
   }
 };
 
-
 // close dialog
 const closeDialog = () => {
   author.value = {

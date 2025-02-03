@@ -78,8 +78,8 @@ function validateBiography(biography) {
     if (!biography) {
         return "Biography is required.";
     }
-    if (biography.length < 20 || biography.length > 2000) {
-        return "Biography must be between 20 and 2000 characters.";
+    if (biography.length < 10 || biography.length > 2000) {
+        return "Biography must be between 10 and 2000 characters.";
     }
     return true;
 }
