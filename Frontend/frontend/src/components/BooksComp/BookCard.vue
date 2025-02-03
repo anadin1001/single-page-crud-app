@@ -6,6 +6,7 @@
 
     <v-card-actions>
       <v-btn color="primary" @click="showDialog = true">View Details</v-btn>
+      <UpdateBook :book="book" :authorId="book.authorId" @bookUpdated="handleUpdate" />
       <DeleteBook :bookId="book.id" :authorId="authorId" @bookDeleted="emit('bookDeleted', book.id)" />
     </v-card-actions>
 
@@ -19,6 +20,7 @@ import BookDetails from './BookDetails.vue';
 import {ref} from 'vue'; // pt composition api
 import { defineProps } from 'vue';
 import DeleteBook from './DeleteBook.vue';
+import UpdateBook from './UpdateBook.vue';
 
 defineProps({
   book: Object,
@@ -26,6 +28,10 @@ defineProps({
 });
 
 const emit = defineEmits(["bookDeleted"]);
+
+const handleUpdate = (bookId) => {
+  emit('bookUpdated', bookId);
+}
 
 const showDialog = ref(false);
 </script>

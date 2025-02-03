@@ -39,26 +39,25 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import axios from "axios";
+import { useStore } from "vuex";
 import AddAuthor from "@/components/AuthorsComp/AddAuthor.vue";
-import AuthorCard from "@/components/AuthorsComp/AuthorCard.vue";
+import AuthorCard from "@/components/AuthorsComp/AuthorCard.vue"; 
 
-const authors = ref([]);
+const store = useStore();
+// const authors = ref([]);
 const searchQuery = ref("");
 const showDialog = ref(false);
 
-const fetchAuthors = async () => {
-  try {
-    const response = await axios.get("http://localhost:8080/api/authors");
-    authors.value = response.data;
-  } catch (error) {
-    console.error("Error fetching authors:", error);
-  }
-};
+onMounted(() => {
+  store.dispatch("fetchAuthors");
+});
+
+const authors = computed(() => store.state.authors);
 
 const removeAuthor = (authorId) => {
-  authors.value = authors.value.filter((author) => author.id !== authorId);
+  store.dispatch("deleteAuthor", authorId);
 };
+  
 
 const updateAuthor = (updatedAuthor) => {
   const index = authors.value.findIndex((author) => author.id === updatedAuthor.id);
@@ -68,7 +67,7 @@ const updateAuthor = (updatedAuthor) => {
 };
 
 const handleNewAuthor = (newAuthor) => {
-  authors.value.push(newAuthor);
+  store.dispatch("addAuthor", newAuthor);
 };
 
 const filteredAuthors = computed(() => {
@@ -80,7 +79,7 @@ const filteredAuthors = computed(() => {
   );
 });
 
-onMounted(fetchAuthors);
+// onMounted(fetchAuthors);
 </script>
 
 <style scoped>

@@ -94,16 +94,13 @@ function validatePages(pages) {
     return true;
 }
 
-function validateYear(year) {
+const validateYear = (year) => {
     const currentYear = new Date().getFullYear();
-    if (!year) {
-        return "Please enter the year of publication.";
-    }
-    if (!Number.isInteger(year) || year > currentYear+1) {
-        return `The year of publication must be before  ${currentYear+1}.`;
+    if (typeof year !== "number" || year < 1500 || year > currentYear) {
+        return `The year of publication must be between 1500 and ${currentYear}.`;
     }
     return true;
-}
+};
 
 
 

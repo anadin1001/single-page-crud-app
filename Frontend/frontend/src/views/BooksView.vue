@@ -1,13 +1,7 @@
 <template>
   <v-container fluid class="books-container">
-    <v-row>
-      <v-col cols="12">
-        <v-btn color="primary" @click="showDialog = true" class="addButton">Add Book</v-btn>
-      </v-col>
-    </v-row>
-
-    <!-- Add book dialog -->
-    <AddBook v-model="showDialog" @bookAdded="handleNewBook" />
+    <!-- Add book component -->
+    <AddBook />
 
     <!-- Search bar -->
     <v-text-field
@@ -18,18 +12,10 @@
       variant="outlined"
     ></v-text-field>
 
+    <!-- Books Grid -->
     <v-row justify="center">
-      <v-col
-        v-for="book in filteredBooks"
-        :key="book.id"
-        cols="12"
-        sm="6"
-        md="4"
-      >
-        <BookCard
-          :book="book"
-          @bookDeleted="removeBook"
-        />
+      <v-col v-for="book in filteredBooks" :key="book.id" cols="12" sm="6" md="4">
+        <BookCard :book="book" @bookDeleted="removeBook" />
       </v-col>
     </v-row>
   </v-container>
@@ -37,31 +23,22 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import axios from "axios";
+import { useStore } from "vuex";
 import AddBook from "@/components/BooksComp/AddBook.vue";
 import BookCard from "@/components/BooksComp/BookCard.vue";
 
-const books = ref([]);
+const store = useStore();
 const searchQuery = ref("");
-const showDialog = ref(false);
 
-const fetchBooks = async () => {
-  try {
-    const response = await axios.get("http://localhost:8080/api/books");
-    books.value = response.data;
-  } catch (error) {
-    console.error("Error fetching books:", error);
-  }
-};
+// Fetch books la montare
+onMounted(() => {
+  store.dispatch("fetchBooks");
+});
 
-const removeBook = (bookId) => {
-  books.value = books.value.filter((book) => book.id !== bookId);
-};
+// imi ia cartile din store cu metoda getBooks
+const books = computed(() => store.state.books);
 
-const handleNewBook = (newBook) => {
-  books.value.push(newBook);
-};
-
+// filtreaza cartile
 const filteredBooks = computed(() => {
   if (!searchQuery.value) {
     return books.value;
@@ -71,15 +48,19 @@ const filteredBooks = computed(() => {
   );
 });
 
-onMounted(fetchBooks);
+// imi sterge din carti cartea
+const removeBook = (bookId) => {
+  store.dispatch("deleteBook", bookId);
+};
 </script>
 
 <style scoped>
 .books-container {
   max-width: 100%;
   width: 100vw;
-  min-height: calc(100vh - 60px); 
-  padding-bottom: 60px; 
+  min-height: calc(100vh - 60px);
+  padding-top: 60px;
+  padding-bottom: 60px;
   background-color: #F6DED8;
   background-size: cover;
   background-repeat: no-repeat;
@@ -89,22 +70,7 @@ onMounted(fetchBooks);
 .search-bar {
   margin-bottom: 20px;
 }
-
-.addButton {
-  margin-top: 20px;
-}
-
-@media (max-width: 600px) {
-  .books-container {
-    padding: 10px;
-  }
-
-  .addButton {
-    margin-top: 10px;
-  }
-
-  .search-bar {
-    margin-bottom: 10px;
-  }
-}
 </style>
+
+
+<!-- ???????De ce am delete si in bookview si in deletebook -->

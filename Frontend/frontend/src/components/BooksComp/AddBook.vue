@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn color="primary" class="add-btn" @click="openDialog" >
+    <v-btn color="primary" class="add-btn" @click="openDialog">
       Add Book
     </v-btn>
 
@@ -32,8 +32,6 @@
             <v-alert v-if="!book.authorId" type="error" dense>
               You must select an author!
             </v-alert>
-
-
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -46,15 +44,12 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, watch } from "vue";
-import axios from "axios";
-import { validationRules } from "@/utils/validationRules";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { bookValidationRules } from "@/utils/validationRules";
 
-const emit = defineEmits(["bookAdded"]);
-
+const store = useStore();
 const dialog = ref(false);
-
-
 const book = ref({
   title: "",
   genre: "",
@@ -64,7 +59,8 @@ const book = ref({
   authorId: "",
 });
 
-const authors = ref([]);
+// Autorii sunt din store
+const authors = computed(() => store.state.authors);
 
 const validationErrors = ref({
   title: [],
@@ -73,15 +69,6 @@ const validationErrors = ref({
   description: [],
   pages: [],
 });
-
-const fetchAuthors = async () => {
-  try {
-    const response = await axios.get("http://localhost:8080/api/authors");
-    authors.value = response.data;
-  } catch (error) {
-    console.error("Error fetching authors:", error);
-  }
-};
 
 const openDialog = () => {
   book.value = {
@@ -100,18 +87,20 @@ const openDialog = () => {
     pages: [],
   };
   dialog.value = true;
-  fetchAuthors();
+
+  // ii incarcam din store in form
+  store.dispatch("fetchAuthors");
 };
 
 const validateField = (field) => {
-  validationErrors.value[field] = validationRules[field]
+  validationErrors.value[field] = bookValidationRules[field]
     .map((rule) => rule(book.value[field]))
     .filter((result) => result !== true);
 };
 
 const validateForm = () => {
   let isValid = true;
-  Object.keys(validationRules).forEach((field) => {
+  Object.keys(bookValidationRules).forEach((field) => {
     validateField(field);
     if (validationErrors.value[field].length > 0) {
       isValid = false;
@@ -120,31 +109,30 @@ const validateForm = () => {
   return isValid;
 };
 
+// trimitere prin vuex
 const submitBook = async () => {
-  if (!validateForm()) {
-    return;
-  }
-  console.log("Submitting book:", book.value);
-  try {
-    console.log("Book Data to be sent:", JSON.stringify(book.value, null, 2));
+  if (!validateForm()) return;
 
-    const response = await axios.post("http://localhost:8080/api/books", book.value);
-    emit("bookAdded", response.data.bookData);
+  book.value.year = Number(book.value.year);
+  book.value.pages = Number(book.value.pages);
+
+  try {
+    console.log("Sending book data:", book.value);
+    
+    const response = await store.dispatch("addBook", book.value);
+    console.log("Book added successfully:", response);
+
     closeDialog();
   } catch (error) {
-    console.error("Error adding book:", error);
+    console.error("Error adding book:", error.response?.data || error);
   }
 };
 
-watch(() => book.value.authorId, (newVal) => {
-  console.log("Selected author ID:", newVal);
-});
-
+// Închidere dialog
 const closeDialog = () => {
   dialog.value = false;
 };
 </script>
-
 
 <style scoped>
 .add-btn {

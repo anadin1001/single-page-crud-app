@@ -3,23 +3,24 @@
     <v-card>
       <v-card-title>Add New Author</v-card-title>
       <v-card-text>
-        <v-text-field v-model="author.name" label="Name" :error-messages="validationErrors.name"
-          @input="validateField('name')"></v-text-field>
+        <v-form ref="form">
+          <v-text-field v-model="author.name" label="Name" :error-messages="validationErrors.name"
+            @input="validateField('name')"></v-text-field>
 
-        <v-text-field v-model="author.genre" label="Genre" :error-messages="validationErrors.genre"
-          @input="validateField('genre')"></v-text-field>
+          <v-text-field v-model="author.genre" label="Genre" :error-messages="validationErrors.genre"
+            @input="validateField('genre')"></v-text-field>
 
-        <v-text-field v-model="author.nationality" label="Nationality"></v-text-field>
+          <v-text-field v-model="author.nationality" label="Nationality"></v-text-field>
 
-        <v-text-field v-model="author.email" label="Email" :error-messages="validationErrors.email"
-          @input="validateField('email')"></v-text-field>
+          <v-text-field v-model="author.email" label="Email" :error-messages="validationErrors.email"
+            @input="validateField('email')"></v-text-field>
 
-        <v-text-field v-model="author.biography" label="Biography" :error-messages="validationErrors.biography"
-          @input="validateField('biography')"></v-text-field>
+          <v-text-field v-model="author.biography" label="Biography" :error-messages="validationErrors.biography"
+            @input="validateField('biography')"></v-text-field>
 
-        <v-text-field v-model="author.age" label="Age" type="number" :error-messages="validationErrors.age"
-          @input="validateField('age')"></v-text-field>
-
+          <v-text-field v-model="author.age" label="Age" type="number" :error-messages="validationErrors.age"
+            @input="validateField('age')"></v-text-field>
+        </v-form>
       </v-card-text>
       <v-card-actions>
         <v-btn color="green" @click="submitAuthor">Save</v-btn>
@@ -31,17 +32,17 @@
 
 <script setup>
 import { ref, defineEmits, defineProps } from "vue";
-import axios from "axios";
-import { validationRules } from "@/utils/validationRules";
+import { useStore } from "vuex";
+import { authorValidationRules } from "@/utils/validationRules";
 
-// Props pentru controlul dialogului
-defineProps({
-  modelValue: Boolean, // Legătură cu `v-model` din `AuthorView.vue`
-});
-
+const store = useStore();
 const emit = defineEmits(["update:modelValue", "authorAdded"]);
 
-// Modelul pentru autor
+defineProps({
+  modelValue: Boolean, 
+});
+
+//formularul sa fie gol
 const author = ref({
   name: "",
   age: "",
@@ -51,7 +52,7 @@ const author = ref({
   genre: "",
 });
 
-// Obiect pentru erori
+
 const validationErrors = ref({
   name: [],
   genre: [],
@@ -60,15 +61,16 @@ const validationErrors = ref({
   age: [],
 });
 
+
 const validateField = (field) => {
-  validationErrors.value[field] = validationRules[field]
+  validationErrors.value[field] = authorValidationRules[field]
     .map((rule) => rule(author.value[field]))
     .filter((result) => result !== true);
 };
 
 const validateForm = () => {
   let isValid = true;
-  Object.keys(validationRules).forEach((field) => {
+  Object.keys(authorValidationRules).forEach((field) => {
     validateField(field);
     if (validationErrors.value[field].length > 0) {
       isValid = false;
@@ -77,22 +79,24 @@ const validateForm = () => {
   return isValid;
 };
 
-// Trimitere catre backend
+
 const submitAuthor = async () => {
+  console.log("Submitting author:", author.value);
   if (!validateForm()) {
+    console.log("Validation failed:", validationErrors.value);
     return;
-  }
+  } 
   try {
-    const response = await axios.post("http://localhost:8080/api/authors", author.value);
-    emit("authorAdded", response.data); // Trimite noul autor înapoi la `AuthorView.vue`
+    await store.dispatch("addAuthor", author.value);
+    emit("authorAdded", author.value);
     closeDialog();
   } catch (error) {
     console.error("Error adding author:", error);
   }
 };
 
-// close dialog
 const closeDialog = () => {
+  console.log("Closing dialog");
   author.value = {
     name: "",
     age: "",
@@ -103,4 +107,11 @@ const closeDialog = () => {
   };
   emit("update:modelValue", false);
 };
+
 </script>
+
+<style scoped>
+.v-card {
+  padding: 10px;
+}
+</style>

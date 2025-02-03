@@ -20,9 +20,10 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from "vue";
-import axios from "axios";
+import { ref } from "vue";
+import { useStore } from "vuex";
 
+const store = useStore();
 const dialog = ref(false);
 const authorId = ref(null);
 
@@ -30,36 +31,41 @@ const props = defineProps({
     bookId: String,
 });
 
-
 const emit = defineEmits(["bookDeleted"]);
 
 const openDialog = async () => {
     dialog.value = true;
-    await findAuthorId();
-};
 
-//din cauza ca in bookView afisam cartile din colectia books, nu este prevazut un id de autor
-//    asa ca trb sa l cautam manual pt a putea stergeac cartea si din autori
-const findAuthorId = async () => {
-    try {
-        const response = await axios.get(`http://localhost:8080/api/authors`);
-        const authors = response.data;
-
-        for (const author of authors) {
-            if (author.books.some(book => book.id === props.bookId)) {
-                console.log(author.id);
-                authorId.value = author.id;
-                console.log(authorId.value);
-                return;
-            }
-        }
-        console.error("Author not found for this book!");
-    } catch (error) {
-        console.error("Error fetching authors:", error);
+    // daca in store nu avem autorii, ii luam din backend
+    if (!store.state.authors.length) {
+        console.log("Fetching authors because store is empty...");
+        await store.dispatch("fetchAuthors");
     }
+
+    findAuthorId();
 };
 
-// onMounted(findAuthorId);
+
+// cautam in store autorul 
+const findAuthorId = () => {
+    const authors = store.state.authors;
+    
+    console.log("Checking authors in store:", authors); 
+
+    for (const author of authors) {
+        console.log("Checking author:", author.id, "Books:", author.books); 
+
+        if (author.books.some(book => book.id === props.bookId)) {
+            authorId.value = author.id;
+            console.log("Found author ID:", authorId.value);
+            return;
+        }
+    }
+
+    console.error("Author not found for this book!");
+};
+
+
 
 const deleteBook = async () => {
     if (!authorId.value) {
@@ -67,18 +73,13 @@ const deleteBook = async () => {
         return;
     }
     try {
-        console.log("Sending DELETE request with:", {
+        console.log("Deleting book with:", {
             authorId: authorId.value,
             bookId: props.bookId
         });
 
-        //axios.delete nu are date trimite prin body deci folosim axios cu specificatii
-        await axios({
-            method: "DELETE",
-            url: "http://localhost:8080/api/books",
-            data: { authorId: authorId.value, bookId: props.bookId }, // ✅ Asigură-te că este în `data`
-            headers: { "Content-Type": "application/json" } // ✅ Setează explicit JSON
-        });
+        
+        await store.dispatch("deleteBook", { authorId: authorId.value, bookId: props.bookId });
 
         emit("bookDeleted", props.bookId);
         dialog.value = false;

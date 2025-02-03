@@ -83,7 +83,6 @@ const deleteAuthor = async (req, res) => {
 
     console.log("Received request to delete author:", authorId);
 
-    // id exista
     if (!authorId) {
       return res.status(400).json({ error: "Author ID is required" });
     }
@@ -91,25 +90,42 @@ const deleteAuthor = async (req, res) => {
     const authorRef = db.collection("authors").doc(authorId);
     const authorSnapshot = await authorRef.get();
 
-    // autor?
     if (!authorSnapshot.exists) {
       return res.status(404).json({ message: "Author not found" });
     }
 
+    const authorData = authorSnapshot.data();
+    const books = authorData.books || [];
+
+    console.log(`Found ${books.length} books for author. Deleting them...`);
+
+    // ????????????? ce inseamna batch
+    const batch = db.batch();
+    for (const book of books) {
+      const bookRef = db.collection("books").doc(book.id);
+      batch.delete(bookRef);
+    }
+    await batch.commit();
+
+    console.log("All books deleted successfully!");
+
+   
     await authorRef.delete();
 
     res.status(200).json({
-      message: "Author deleted successfully",
+      message: "Author and associated books deleted successfully",
       authorId: authorId,
+      deletedBooks: books.map(book => book.id),
     });
   } catch (error) {
     console.error("Error deleting author:", error);
     res.status(500).json({
-      message: "Doesn t work",
+      message: "Error deleting author and books",
       error: error.message,
     });
   }
 };
+
 
 const getAuthorById = async (req, res) => {
   try {

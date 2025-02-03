@@ -7,7 +7,8 @@
       <v-btn text to="/">Home</v-btn>
       <v-btn text to="/authors">Authors</v-btn>
       <v-btn text to="/books">Books</v-btn>
-      <v-btn text to="/sign">Sign-in</v-btn>
+      <v-btn text to="/signin">Sign-in</v-btn>
+      <v-btn text to="/signup">Sign-up</v-btn>
     </v-container>
   </v-app-bar>
 </template>
